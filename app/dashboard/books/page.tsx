@@ -18,6 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import Image from "next/image"
 
 interface Book {
   id: string
@@ -147,10 +148,12 @@ export default function BooksPage() {
             {books.map((book) => (
               <TableRow key={book.id}>
                 <TableCell>
-                  <img
+                  <Image
                     src={book.thumbnail || "/placeholder.svg"}
                     alt={`${book.title} Thumbnail`}
-                    className="w-12 h-12 rounded-md"
+                    width={48}
+                    height={48}
+                    className="rounded-md"
                     onError={(e) => {
                       e.currentTarget.src = "/placeholder.svg"
                     }}
@@ -224,7 +227,7 @@ export default function BooksPage() {
           <DialogHeader>
             <DialogTitle>Confirm Deletion</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete the book "{bookToDelete?.title}"? This action cannot be undone.
+              Are you sure you want to delete the book &quot;{bookToDelete?.title}&quot;? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

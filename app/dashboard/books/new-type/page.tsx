@@ -117,7 +117,8 @@ export default function NewBookTypePage() {
           <DialogHeader>
             <DialogTitle>Confirm Deletion</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete the book type "{typeToDelete?.name}"? This action cannot be undone.
+              Are you sure you want to delete the book type &quot;{typeToDelete?.name}&quot;? This action cannot be
+              undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
