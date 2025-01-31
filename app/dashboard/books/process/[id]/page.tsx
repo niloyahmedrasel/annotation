@@ -1,103 +1,66 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
-import { OCRSection } from "@/components/ocr-section"
-import { ReviewSection } from "@/components/review-section"
-import ProgressBar from "@/components/progress-bar"
-import { ChevronLeft, ChevronRight, BookOpen, FileText, Tag, Type, CheckCircle } from "lucide-react"
-
-const processingSteps = [
-  { id: "OCR", title: "OCR", icon: <BookOpen className="w-6 h-6" /> },
-  { id: "ChapterFootnote", title: "Chapter & Footnote", icon: <FileText className="w-6 h-6" /> },
-  { id: "NER", title: "NER", icon: <Tag className="w-6 h-6" /> },
-  { id: "Diacritics", title: "Diacritics", icon: <Type className="w-6 h-6" /> },
-  { id: "Review", title: "Review", icon: <CheckCircle className="w-6 h-6" /> },
-]
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ChevronLeft } from "lucide-react"
 
 export default function ProcessBookPage({ params }: { params: { id: string } }) {
-  const [currentStep, setCurrentStep] = useState(0)
-  const [completedSteps, setCompletedSteps] = useState<number[]>([])
   const router = useRouter()
+  const [error, setError] = useState<string | null>(null)
 
-  const handleStepClick = (step: number) => {
-    if (step <= Math.max(...completedSteps, 0) + 1) {
-      setCurrentStep(step)
-    }
-  }
-
-  const handlePreviousStep = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1)
-      setCompletedSteps((prev) => prev.filter((step) => step < currentStep - 1))
-    }
-  }
-
-  const handleNextStep = () => {
-    if (currentStep < processingSteps.length - 1) {
-      setCompletedSteps((prev) => [...prev, currentStep])
-      setCurrentStep((prev) => prev + 1)
-    }
-  }
-
-  const isReviewStep = currentStep === processingSteps.length - 1
-
-  useEffect(() => {
-    // Reset completed steps when navigating back to a previous step
-    setCompletedSteps((prev) => prev.filter((step) => step < currentStep))
-  }, [currentStep])
-
-  if (isReviewStep) {
-    return <ReviewSection onBack={handlePreviousStep} bookId={params.id} />
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <h2 className="text-2xl font-bold mb-4">Error</h2>
+        <p className="text-xl mb-4">{error}</p>
+        <Link href="/dashboard/books" className="text-blue-500 hover:underline">
+          Return to Books
+        </Link>
+      </div>
+    )
   }
 
   return (
-    <div className="h-screen flex flex-col">
-      <div className="flex-grow overflow-y-auto">
-        <div className="container mx-auto px-4 py-8">
-          <Button variant="ghost" onClick={() => router.push("/dashboard/books")} className="mb-4">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <Button variant="ghost" onClick={() => router.push("/dashboard/books")}>
             <ChevronLeft className="mr-2 h-4 w-4" />
-            Back to All Books
+            Back to Books
           </Button>
-          <h1 className="text-3xl font-bold mb-6">Process Book: {params.id}</h1>
-          <ProgressBar
-            steps={processingSteps}
-            currentStep={currentStep}
-            completedSteps={completedSteps}
-            onStepClick={handleStepClick}
-          />
-          <Separator className="my-8" />
-
-          <div className="mt-8">
-            {currentStep === 0 && (
-              <OCRSection
-                onComplete={() => {
-                  setCompletedSteps((prev) => [...prev, currentStep])
-                  setCurrentStep((prev) => prev + 1)
-                }}
-              />
-            )}
-            {(currentStep === 1 || currentStep === 2 || currentStep === 3) && (
-              <div className="text-center py-8">
-                <h2 className="text-2xl font-semibold mb-4">{processingSteps[currentStep].title}</h2>
-                <p>This feature is not yet implemented.</p>
-              </div>
-            )}
-          </div>
+          <h1 className="text-3xl font-bold">Process Book: {params.id}</h1>
         </div>
       </div>
 
-      <div className="bg-gray-800 p-4 flex justify-between">
-        <Button onClick={handlePreviousStep} disabled={currentStep === 0}>
-          <ChevronLeft className="mr-2 h-4 w-4" />
-          Previous
-        </Button>
-        <Button onClick={handleNextStep} disabled={currentStep === processingSteps.length - 1}>
-          Next
-          <ChevronRight className="ml-2 h-4 w-4" />
-        </Button>
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>OCR Processing</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Extract text from book images using OCR technology.
+            </p>
+            <Button className="mt-4" disabled>
+              Coming Soon
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Content Review</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Review and edit extracted content.</p>
+            <Button className="mt-4" disabled>
+              Coming Soon
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

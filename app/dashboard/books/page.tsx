@@ -155,7 +155,10 @@ export default function BooksPage() {
                     height={48}
                     className="rounded-md"
                     onError={(e) => {
-                      e.currentTarget.src = "/placeholder.svg"
+                      const target = e.target as HTMLImageElement
+                      target.src =
+                        "https://sjc.microlink.io/Ap3ECx3IV9bAgLK3vfqba5gLqEDSRHqVC6NvO1nv3Ten3xzibdA2u9xw_P3IC3odA-p8G1D_ziXJZXznXF9dig.jpeg"
+                      target.onerror = null // Prevent infinite loop
                     }}
                   />
                 </TableCell>
